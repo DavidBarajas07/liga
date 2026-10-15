@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b7a3e">
+  <title>Liga de Veteranos</title>
+  <style>
+  :root {
+    --bg: #f3f5f7; --card: #ffffff; --txt: #18212b; --sub: #5d6875; --line: #e1e6eb;
+    --pri: #0b7a3e; --pri-d: #075c2e; --pri2: #e5f3ea;
+    --warn: #9a5b00; --warn2: #fff3df; --bad: #b42318; --bad2: #fdecea; --ok2: #e8f6ee;
+    --am: #f5c518; --ve: #1f9d55; --az: #2563eb; --ro: #d92d20;
+    --radio: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--txt); font-size: 14px; line-height: 1.4; }
+  h2 { font-size: 18px; margin: 18px 0 10px; }
+  h3 { font-size: 15px; margin: 16px 0 8px; }
+  a { color: var(--pri); }
+  .sub { color: var(--sub); font-size: 12px; }
+
+  .top { background: var(--pri); color: #fff; padding: 10px 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .cab { position: sticky; top: 0; z-index: 5; }
+  .top .liga { font-weight: 700; font-size: 17px; margin-right: auto; }
+  .top select { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.35); border-radius: 8px; padding: 6px 8px; font-size: 13px; max-width: 200px; }
+  .top select option { color: #000; }
+  .top a { color: #fff; font-size: 13px; }
+
+  .tabs { display: flex; gap: 6px; overflow-x: auto; padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--line); scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button { flex: none; border: 1px solid var(--line); background: var(--card); color: var(--sub); padding: 7px 13px; border-radius: 999px; font-size: 13px; cursor: pointer; }
+  .tabs button.on { background: var(--pri); border-color: var(--pri); color: #fff; font-weight: 600; }
+
+  main { padding: 4px 16px 40px; max-width: 1200px; margin: 0 auto; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radio); padding: 14px; margin: 12px 0; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .kpi .v { font-size: 22px; font-weight: 700; }
+  .kpi .l { color: var(--sub); font-size: 12px; }
+
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: var(--radio); background: var(--card); }
+  table.t { border-collapse: collapse; width: 100%; font-size: 13px; }
+  table.t th, table.t td { padding: 8px 8px; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; }
+  table.t th { background: #f8fafb; color: var(--sub); font-weight: 600; font-size: 12px; position: sticky; top: 0; }
+  table.t td.l, table.t th.l { text-align: left; }
+  table.t tr:last-child td { border-bottom: none; }
+  table.t tr.mio td { background: var(--pri2); }
+  table.t td.b { font-weight: 700; }
+  table.t .fija { position: sticky; left: 0; background: var(--card); }
+  table.t tr.mio .fija { background: var(--pri2); }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #eef1f4; color: var(--sub); }
+  .tag.ok { background: var(--ok2); color: var(--pri-d); }
+  .tag.warn { background: var(--warn2); color: var(--warn); }
+  .tag.bad { background: var(--bad2); color: var(--bad); }
+  .tj { display: inline-block; width: 10px; height: 14px; border-radius: 2px; vertical-align: -2px; }
+  .tj.a { background: var(--am); } .tj.v { background: var(--ve); } .tj.z { background: var(--az); } .tj.r { background: var(--ro); }
+  .forma { display: inline-flex; gap: 2px; }
+  .forma span { width: 18px; height: 18px; border-radius: 4px; font-size: 10px; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
+  .f-G { background: var(--ve); } .f-GS { background: #6cc191; } .f-PS { background: #f0a39b; } .f-E { background: #9aa4ae; } .f-P, .f-NP { background: var(--ro); }
+
+  .btn { border: 1px solid var(--pri); background: var(--pri); color: #fff; padding: 7px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; font-weight: 600; }
+  .btn:hover { background: var(--pri-d); }
+  .btn.sec { background: var(--card); color: var(--pri); }
+  .btn.peligro { background: var(--card); color: var(--bad); border-color: var(--bad); }
+  .btn.mini { padding: 4px 9px; font-size: 12px; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .barra { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+
+  input, select, textarea { font: inherit; border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; background: #fff; color: var(--txt); }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--pri2); border-color: var(--pri); }
+  .form { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+  .form label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--sub); font-weight: 600; }
+  .form label.ancho { grid-column: 1 / -1; }
+
+  .vacio { text-align: center; color: var(--sub); padding: 30px 10px; }
+  .cargando { text-align: center; color: var(--sub); padding: 50px 10px; }
+  .aviso { background: var(--warn2); color: var(--warn); border-radius: 8px; padding: 8px 12px; margin: 6px 0; font-size: 13px; }
+  .aviso.bad { background: var(--bad2); color: var(--bad); }
+  .aviso.ok { background: var(--ok2); color: var(--pri-d); }
+
+  .partido { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; }
+  .partido .eq { font-weight: 600; }
+  .partido .eq.v { text-align: right; }
+  .partido .eq.gana { color: var(--pri-d); }
+  .marcador { font-size: 20px; font-weight: 800; text-align: center; min-width: 70px; }
+  .marcador small { display: block; font-size: 11px; font-weight: 600; color: var(--sub); }
+  .meta { color: var(--sub); font-size: 12px; margin-top: 6px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; }
+
+  dialog { border: none; border-radius: 14px; padding: 0; width: min(1100px, 96vw); max-height: 92vh; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  dialog::backdrop { background: rgba(10,20,30,.45); }
+  .dlg-h { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #fff; z-index: 2; }
+  .dlg-h b { font-size: 16px; }
+  .dlg-b { padding: 14px 16px; }
+  .dlg-f { display: flex; gap: 8px; justify-content: flex-end; padding: 12px 16px; border-top: 1px solid var(--line); position: sticky; bottom: 0; background: #fff; }
+
+  #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #18212b; color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 13px; display: none; z-index: 50; max-width: 90vw; }
+  #toast.err { background: var(--bad); }
+
+  @media (max-width: 600px) {
+    main { padding: 4px 10px 40px; }
+    table.t th, table.t td { padding: 7px 6px; }
+    .top .liga { font-size: 15px; width: 100%; }
+    .top select { flex: 1; max-width: none; }
+  }
+</style>
+
+</head>
+<body>
+  <div class="cab">
+    <header class="top">
+      <div class="liga">Liga de Veteranos</div>
+      <select id="selTorneo" aria-label="Torneo"></select>
+      <select id="selEquipo" aria-label="Mi equipo"><option value="">Todos los equipos</option></select>
+    </header>
+    <nav class="tabs" id="tabs"></nav>
+  </div>
+  <main id="vista"><div class="cargando">Cargando…</div></main>
+  <div id="toast"></div>
+
+  <script>
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  const DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+  const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  function fmtFecha(iso, conDia) {
+    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso || '';
+    const [y, m, d] = iso.split('-').map(Number);
+    const dt = new Date(y, m - 1, d);
+    return (conDia !== false ? DIAS[dt.getDay()] + ' ' : '') + d + ' ' + MESES[m - 1] + (y !== new Date().getFullYear() ? ' ' + y : '');
+  }
+
+  /** Llama una función del servidor y devuelve una promesa. */
+  function srv(fn, ...args) {
+    return new Promise((ok, mal) => {
+      google.script.run.withSuccessHandler(ok).withFailureHandler(e => mal(e && e.message ? e : new Error(String(e))))[fn](...args);
+    });
+  }
+
+  let _toastT;
+  function toast(msg, error) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.className = error ? 'err' : '';
+    t.style.display = 'block';
+    clearTimeout(_toastT);
+    _toastT = setTimeout(() => t.style.display = 'none', error ? 6000 : 2500);
+  }
+
+  function guardarLocal(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function leerLocal(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+
+  function tarjetas() {
+    return '<th title="Amarillas"><span class="tj a"></span></th><th title="Verdes"><span class="tj v"></span></th>' +
+      '<th title="Azules"><span class="tj z"></span></th><th title="Rojas"><span class="tj r"></span></th>';
+  }
+
+  function etiquetaEstadoPartido(e, np) {
+    const m = { Programado: '', Jugado: 'ok', Default: 'warn', Suspendido: 'bad', Reprogramado: 'warn' };
+    const txt = e === 'Default' ? (np === 'Ambos' ? 'Ninguno se presentó' : 'No se presentó') : e === 'Jugado' ? 'Final' : e;
+    return '<span class="tag ' + (m[e] || '') + '">' + esc(txt) + '</span>';
+  }
+
+  function etiquetaSancion(e) {
+    const m = { Vigente: 'bad', Cumplida: 'ok', Anulada: '', Aplicada: 'warn' };
+    return '<span class="tag ' + (m[e] || '') + '">' + esc(e) + '</span>';
+  }
+</script>
+
+  <script>
+    const TABS = [
+      ['inicio', 'Inicio'], ['tabla', 'Tabla'], ['jornadas', 'Jornadas'], ['goleo', 'Goleo'],
+      ['porteros', 'Porteros'], ['tarjetas', 'Tarjetas'], ['sanciones', 'Sanciones'],
+      ['asistencia', 'Asistencia'], ['faltas', 'Faltas'], ['equipos', 'Equipos'],
+    ];
+    let D = null, tab = 'inicio', miEquipo = leerLocal('miEquipo'), jornadaSel = null;
+
+    // Fuera de Google (GitHub Pages) los datos se piden a la app web por URL.
+    const API = 'https://script.google.com/macros/s/AKfycbzO3b8oIp6OxKLeEOdan8103TGgHLVrIh9jT9M9pX7kVAtu4MuksZhV-3Xq_gZlSXcMTw/exec';
+    function pedirDatos(tid) {
+      if (window.google && google.script && google.script.run) return srv('getDatosPublicos', tid);
+      return fetch(API + '?api=publico&t=' + encodeURIComponent(tid || ''), { credentials: 'omit' })
+        .then(r => { if (!r.ok) throw new Error('Error ' + r.status); return r.text(); });
+    }
+
+    function cargar(tid) {
+      $('#vista').innerHTML = '<div class="cargando">Cargando…</div>';
+      pedirDatos(tid || leerLocal('torneo') || '').then(txt => {
+        D = JSON.parse(txt);
+        $('.liga').textContent = D.liga;
+        document.title = D.liga;
+        jornadaSel = null;
+        $('#selTorneo').innerHTML = D.torneos.map(t => `<option value="${esc(t.ID)}" ${t.ID === D.tid ? 'selected' : ''}>${esc(t.Nombre)}</option>`).join('');
+        $('#selEquipo').innerHTML = '<option value="">Todos los equipos</option>' +
+          D.equipos.map(e => `<option value="${esc(e.ID)}" ${e.ID === miEquipo ? 'selected' : ''}>${esc(e.Nombre)}</option>`).join('');
+        if (!D.equipos.some(e => e.ID === miEquipo)) miEquipo = '';
+        pintar();
+      }).catch(e => { $('#vista').innerHTML = `<div class="vacio">No se pudo cargar: ${esc(e.message)}</div>`; });
+    }
+
+    function pintarTabs() {
+      $('#tabs').innerHTML = TABS.map(([k, n]) => `<button data-t="${k}" class="${k === tab ? 'on' : ''}">${n}</button>`).join('');
+    }
+
+    function pintar() {
+      pintarTabs();
+      if (!D) return;
+      const f = VISTAS[tab] || VISTAS.inicio;
+      $('#vista').innerHTML = f() + `<p class="sub" style="text-align:center;margin-top:24px">Actualizado ${esc(D.actualizado)}</p>`;
+    }
+
+    const filtra = lista => miEquipo ? lista.filter(x => x.EquipoID === miEquipo) : lista;
+    const nombreMiEquipo = () => (D.equipos.find(e => e.ID === miEquipo) || {}).Nombre || '';
+
+    function tarjetaPartido(p) {
+      const jugado = p.Estado === 'Jugado' || p.Estado === 'Default';
+      const gl = Number(p.GL), gv = Number(p.GV);
+      let ganaL = jugado && gl > gv, ganaV = jugado && gv > gl;
+      let extra = '';
+      if (p.Estado === 'Jugado' && gl === gv && p.SL !== '' && p.SV !== '') {
+        extra = `<small>Shootout ${esc(p.SL)}-${esc(p.SV)}</small>`;
+        ganaL = Number(p.SL) > Number(p.SV); ganaV = !ganaL;
+      }
+      if (p.Estado === 'Default') extra = `<small>Default</small>`;
+      const mio = miEquipo && (p.LocalID === miEquipo || p.VisitaID === miEquipo);
+      return `<div class="card" style="${mio ? 'border-color:var(--pri)' : ''}">
+        <div class="partido">
+          <div class="eq ${ganaL ? 'gana' : ''}">${esc(p.Local)}</div>
+          <div class="marcador">${jugado ? esc(p.GL) + ' - ' + esc(p.GV) : '<span class="sub">vs</span>'}${extra}</div>
+          <div class="eq v ${ganaV ? 'gana' : ''}">${esc(p.Visita)}</div>
+        </div>
+        <div class="meta"><span>${esc(fmtFecha(p.Fecha))} ${esc(p.Hora)} ${p.Cancha ? '· ' + esc(p.Cancha) : ''}</span>${etiquetaEstadoPartido(p.Estado, p.NoSePresento)}</div>
+      </div>`;
+    }
+
+    function tablaHtml(filas, cols) {
+      if (!filas.length) return '<div class="vacio">Sin datos todavía.</div>';
+      return `<div class="scroll"><table class="t"><thead><tr>${cols.map(c => `<th class="${c.l ? 'l' : ''} ${c.fija ? 'fija' : ''}" title="${esc(c.tit || '')}">${c.h}</th>`).join('')}</tr></thead><tbody>` +
+        filas.map(f => `<tr class="${miEquipo && f.EquipoID === miEquipo ? 'mio' : ''}">${cols.map(c => `<td class="${c.l ? 'l' : ''} ${c.b ? 'b' : ''} ${c.fija ? 'fija' : ''}">${c.v(f)}</td>`).join('')}</tr>`).join('') +
+        '</tbody></table></div>';
+    }
+
+    const VISTAS = {
+      inicio() {
+        const r = D.resumen, lider = D.tabla[0], gol = D.goleo[0], falt = D.faltas.find(f => f.PJ);
+        const vig = D.sanciones.filter(s => s.Estado === 'Vigente');
+        const prox = D.jornadas.find(j => j.partidos.some(p => p.Estado === 'Programado' || p.Estado === 'Reprogramado'));
+        const ult = [...D.jornadas].reverse().find(j => j.partidos.some(p => p.Estado === 'Jugado' || p.Estado === 'Default'));
+        let h = `<h2>${esc(D.torneo)}</h2><div class="grid">
+          <div class="card kpi"><div class="v">${r.jugados}/${r.total}</div><div class="l">Partidos jugados</div></div>
+          <div class="card kpi"><div class="v">${r.goles}</div><div class="l">Goles (${r.promedio} por partido)</div></div>
+          <div class="card kpi"><div class="v">${lider && lider.PJ ? esc(lider.Equipo) : '—'}</div><div class="l">Líder${lider && lider.PJ ? ' · ' + lider.Pts + ' pts' : ''}</div></div>
+          <div class="card kpi"><div class="v">${gol ? esc(gol.Jugador) : '—'}</div><div class="l">Goleador${gol ? ' · ' + gol.Goles + ' goles (' + esc(gol.Equipo) + ')' : ''}</div></div>
+          <div class="card kpi"><div class="v">${falt ? esc(falt.Equipo) : '—'}</div><div class="l">Más faltas${falt ? ' · ' + falt.Faltas : ''}</div></div>
+          <div class="card kpi"><div class="v">${vig.length}</div><div class="l">Sanciones vigentes</div></div>
+        </div>`;
+        if (miEquipo) {
+          const susp = vig.filter(s => s.EquipoID === miEquipo);
+          h += `<h3>Suspendidos de ${esc(nombreMiEquipo())}</h3>` + (susp.length
+            ? susp.map(s => `<div class="aviso bad"><b>${esc(s.Nombre)}</b> — ${esc(s.Origen)}${s.Partidos ? ` · faltan ${s.Restantes} de ${s.Partidos} partido(s)` : ''}${s.FechaFin ? ' · hasta ' + esc(fmtFecha(s.FechaFin)) : ''}</div>`).join('')
+            : '<div class="aviso ok">Sin jugadores suspendidos.</div>');
+        }
+        if (prox) h += `<h3>Próxima: ${prox.fase === 'Regular' ? 'Jornada ' + prox.jornada : esc(prox.fase) + ' ' + prox.jornada}</h3>` +
+          filtraPartidos(prox.partidos).map(tarjetaPartido).join('');
+        if (ult) h += `<h3>Últimos resultados: ${ult.fase === 'Regular' ? 'Jornada ' + ult.jornada : esc(ult.fase)}</h3>` +
+          filtraPartidos(ult.partidos).map(tarjetaPartido).join('');
+        return h;
+      },
+
+      tabla() {
+        return `<h2>Tabla de posiciones</h2>` + tablaHtml(D.tabla.map(f => Object.assign({ EquipoID: f.ID }, f)), [
+          { h: '#', v: f => f.Pos, b: 1 },
+          { h: 'Equipo', v: f => esc(f.Equipo) + (f.Sanc ? ` <span class="tag bad" title="Puntos restados por sanción">-${f.Sanc}</span>` : ''), l: 1, fija: 1 },
+          { h: 'Pts', v: f => f.Pts, b: 1 },
+          { h: 'PJ', v: f => f.PJ }, { h: 'G', v: f => f.G, tit: 'Ganados' },
+          { h: 'GS', v: f => f.GS, tit: 'Ganados en shootout' }, { h: 'PS', v: f => f.PS, tit: 'Perdidos en shootout' },
+          { h: 'P', v: f => f.P, tit: 'Perdidos' }, { h: 'GF', v: f => f.GF }, { h: 'GC', v: f => f.GC },
+          { h: 'DG', v: f => (f.DG > 0 ? '+' : '') + f.DG },
+          { h: 'Forma', v: f => `<span class="forma">${f.Forma.map(x => `<span class="f-${x}">${x === 'GS' ? 'G' : x === 'PS' ? 'P' : x === 'NP' ? 'X' : x}</span>`).join('')}</span>`, l: 1 },
+        ]) + `<p class="sub">G ganados · GS ganados en shootout · PS perdidos en shootout · P perdidos · X no se presentó · GF/GC goles a favor/en contra · DG diferencia.</p>`;
+      },
+
+      jornadas() {
+        if (!D.jornadas.length) return '<div class="vacio">Aún no hay calendario.</div>';
+        if (jornadaSel == null) {
+          const i = D.jornadas.findIndex(j => j.partidos.some(p => p.Estado === 'Programado' || p.Estado === 'Reprogramado'));
+          jornadaSel = i < 0 ? D.jornadas.length - 1 : i;
+        }
+        const j = D.jornadas[jornadaSel];
+        const sel = `<select id="selJornada">${D.jornadas.map((x, i) => `<option value="${i}" ${i === jornadaSel ? 'selected' : ''}>${x.fase === 'Regular' ? 'Jornada ' + x.jornada : esc(x.fase) + ' ' + x.jornada}</option>`).join('')}</select>`;
+        return `<div class="barra"><button class="btn sec mini" data-j="-1">◀</button>${sel}<button class="btn sec mini" data-j="1">▶</button></div>` +
+          filtraPartidos(j.partidos).map(tarjetaPartido).join('') +
+          (j.descansa.length ? `<p class="sub">Descansa: ${j.descansa.map(esc).join(', ')}</p>` : '');
+      },
+
+      goleo() {
+        return `<h2>Goleo individual</h2>` + tablaHtml(filtra(D.goleo).map((g, i) => Object.assign({ i: i + 1 }, g)), [
+          { h: '#', v: f => f.i }, { h: 'Jugador', v: f => esc(f.Jugador), l: 1, fija: 1 }, { h: 'No.', v: f => esc(f.Numero) },
+          { h: 'Equipo', v: f => esc(f.Equipo), l: 1 }, { h: 'Goles', v: f => f.Goles, b: 1 }, { h: 'PJ', v: f => f.PJ },
+        ]);
+      },
+
+      porteros() {
+        return `<h2>Porteros menos goleados</h2><p class="sub">Promedio de goles recibidos por partido. Califican con ${D.minPor}+ partidos.</p>` +
+          tablaHtml(filtra(D.porteros), [
+            { h: 'Portero', v: f => esc(f.Jugador) + (f.Califica ? '' : ' <span class="tag">no califica</span>'), l: 1, fija: 1 },
+            { h: 'Equipo', v: f => esc(f.Equipo), l: 1 }, { h: 'PJ', v: f => f.PJ }, { h: 'GC', v: f => f.GC },
+            { h: 'Prom.', v: f => f.Prom.toFixed(2), b: 1 }, { h: 'En ceros', v: f => f.Ceros },
+          ]);
+      },
+
+      tarjetas() {
+        return `<h2>Tarjetas por equipo</h2>` + tablaHtml(D.tarjetasEquipo, [
+          { h: 'Equipo', v: f => esc(f.Equipo), l: 1, fija: 1 },
+          { h: '<span class="tj a"></span>', v: f => f.A }, { h: '<span class="tj v"></span>', v: f => f.V },
+          { h: '<span class="tj z"></span>', v: f => f.Az }, { h: '<span class="tj r"></span>', v: f => f.R },
+          { h: 'Fair play', v: f => f.FP, b: 1, tit: 'Puntos de fair play (menos es mejor)' },
+        ]) + `<h2>Tarjetas por jugador</h2>` + tablaHtml(filtra(D.tarjetasJugador), [
+          { h: 'Jugador', v: f => esc(f.Jugador), l: 1, fija: 1 }, { h: 'No.', v: f => esc(f.Numero) },
+          { h: 'Equipo', v: f => esc(f.Equipo), l: 1 },
+          { h: '<span class="tj a"></span>', v: f => f.A }, { h: '<span class="tj v"></span>', v: f => f.V },
+          { h: '<span class="tj z"></span>', v: f => f.Az }, { h: '<span class="tj r"></span>', v: f => f.R },
+        ]);
+      },
+
+      sanciones() {
+        const lista = filtra(D.sanciones);
+        const vig = lista.filter(s => s.Estado === 'Vigente'), resto = lista.filter(s => s.Estado !== 'Vigente');
+        const cols = [
+          { h: 'Sancionado', v: f => esc(f.Nombre) + (f.Sujeto !== 'Jugador' ? ` <span class="tag">${esc(f.Sujeto)}</span>` : ''), l: 1, fija: 1 },
+          { h: 'Equipo', v: f => esc(f.Equipo), l: 1 },
+          { h: 'Motivo', v: f => esc(f.Origen) + (f.Motivo && f.Motivo !== f.Origen ? `<br><span class="sub">${esc(f.Motivo)}</span>` : ''), l: 1 },
+          { h: 'Partidos', v: f => f.Partidos ? `${f.Cumplidos}/${f.Partidos}` : '—', tit: 'Cumplidos / total' },
+          { h: 'Inicio', v: f => esc(fmtFecha(f.FechaInicio, false)) },
+          { h: 'Fin', v: f => f.FechaFin ? esc(fmtFecha(f.FechaFin, false)) + (f.FinEstimado ? ' <span class="sub">(est.)</span>' : '') : '—' },
+          { h: 'Pts', v: f => f.Puntos ? '-' + f.Puntos : '', tit: 'Puntos restados' },
+          { h: 'Estado', v: f => etiquetaSancion(f.Estado) },
+        ];
+        return `<h2>Sanciones vigentes</h2>` + tablaHtml(vig, cols) + `<h2>Historial</h2>` + tablaHtml(resto, cols) +
+          `<p class="sub">"Fin (est.)" es la fecha del último partido que cubre la suspensión según el calendario.</p>`;
+      },
+
+      asistencia() {
+        return `<h2>Asistencia de jugadores</h2><p class="sub">Partidos en que se presentó el jugador / partidos jugados por su equipo.</p>` +
+          tablaHtml(filtra(D.asistencia), [
+            { h: 'Jugador', v: f => esc(f.Jugador), l: 1, fija: 1 }, { h: 'No.', v: f => esc(f.Numero) },
+            { h: 'Equipo', v: f => esc(f.Equipo), l: 1 }, { h: 'Asistió', v: f => `${f.PJ}/${f.PJEquipo}` },
+            { h: '%', v: f => `<span class="tag ${f.Pct >= 75 ? 'ok' : f.Pct >= 40 ? 'warn' : 'bad'}">${f.Pct}%</span>` },
+          ]);
+      },
+
+      faltas() {
+        return `<h2>Faltas por equipo</h2>` + tablaHtml(D.faltas, [
+          { h: '#', v: f => D.faltas.indexOf(f) + 1 }, { h: 'Equipo', v: f => esc(f.Equipo), l: 1, fija: 1 },
+          { h: 'Faltas', v: f => f.Faltas, b: 1 }, { h: 'PJ', v: f => f.PJ }, { h: 'Prom.', v: f => f.Prom },
+          { h: 'Tarjetas', v: f => f.Tarjetas },
+        ]);
+      },
+
+      equipos() {
+        const lista = miEquipo ? D.plantillas.filter(e => e.ID === miEquipo) : D.plantillas;
+        if (!lista.length) return '<div class="vacio">Sin equipos.</div>';
+        return lista.map(e => `<div class="card"><h3 style="margin-top:0">${esc(e.Nombre)}${e.Activo ? '' : ' <span class="tag">inactivo</span>'}</h3>
+          ${e.Delegado ? `<div class="sub">Delegado: ${esc(e.Delegado)}</div>` : ''}
+          <div class="scroll" style="margin-top:8px"><table class="t"><thead><tr><th>No.</th><th class="l">Jugador</th><th class="l">Posición</th><th>PJ</th><th>Goles</th></tr></thead><tbody>
+          ${e.Jugadores.map(j => `<tr><td>${esc(j.Numero)}</td><td class="l">${esc(j.Nombre)}${j.Suspendido ? ' <span class="tag bad">suspendido</span>' : ''}</td><td class="l">${esc(j.Posicion)}</td><td>${j.PJ}</td><td>${j.Goles}</td></tr>`).join('') || '<tr><td colspan="5" class="sub">Sin jugadores</td></tr>'}
+          </tbody></table></div></div>`).join('');
+      },
+    };
+
+    const filtraPartidos = ps => miEquipo ? ps.filter(p => p.LocalID === miEquipo || p.VisitaID === miEquipo) : ps;
+
+    $('#tabs').addEventListener('click', e => {
+      const b = e.target.closest('button[data-t]');
+      if (!b) return;
+      tab = b.dataset.t;
+      pintar();
+      window.scrollTo(0, 0);
+    });
+    $('#selTorneo').addEventListener('change', e => { guardarLocal('torneo', e.target.value); cargar(e.target.value); });
+    $('#selEquipo').addEventListener('change', e => { miEquipo = e.target.value; guardarLocal('miEquipo', miEquipo); pintar(); });
+    $('#vista').addEventListener('change', e => {
+      if (e.target.id === 'selJornada') { jornadaSel = Number(e.target.value); pintar(); }
+    });
+    $('#vista').addEventListener('click', e => {
+      const b = e.target.closest('button[data-j]');
+      if (!b) return;
+      jornadaSel = Math.min(D.jornadas.length - 1, Math.max(0, jornadaSel + Number(b.dataset.j)));
+      pintar();
+    });
+
+    pintarTabs();
+    cargar();
+  </script>
+</body>
+</html>
